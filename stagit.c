@@ -253,8 +253,7 @@ err:
 int
 refs_cmp(const void *v1, const void *v2)
 {
-	struct referenceinfo *r1 = (struct referenceinfo *)v1;
-	struct referenceinfo *r2 = (struct referenceinfo *)v2;
+	const struct referenceinfo *r1 = v1, *r2 = v2;
 	time_t t1, t2;
 	int r;
 
