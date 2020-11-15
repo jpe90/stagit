@@ -500,11 +500,11 @@ writefooter(FILE *fp)
 	fputs("</div>\n</body>\n</html>\n", fp);
 }
 
-int
+size_t
 writeblobhtml(FILE *fp, const git_blob *blob)
 {
 	size_t n = 0, i, prev;
-	const char *nfmt = "<a href=\"#l%d\" class=\"line\" id=\"l%d\">%7d</a> ";
+	const char *nfmt = "<a href=\"#l%zu\" class=\"line\" id=\"l%zu\">%7zu</a> ";
 	const char *s = git_blob_rawcontent(blob);
 	git_off_t len = git_blob_rawsize(blob);
 
@@ -884,12 +884,12 @@ writeatom(FILE *fp, int all)
 	return 0;
 }
 
-int
+size_t
 writeblob(git_object *obj, const char *fpath, const char *filename, git_off_t filesize)
 {
 	char tmp[PATH_MAX] = "", *d;
 	const char *p;
-	int lc = 0;
+	size_t lc = 0;
 	FILE *fp;
 
 	if (strlcpy(tmp, fpath, sizeof(tmp)) >= sizeof(tmp))
@@ -977,8 +977,8 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 	git_off_t filesize;
 	const char *entryname;
 	char filepath[PATH_MAX], entrypath[PATH_MAX];
-	size_t count, i;
-	int lc, r, ret;
+	size_t count, i, lc;
+	int r, ret;
 
 	count = git_tree_entrycount(tree);
 	for (i = 0; i < count; i++) {
@@ -1020,7 +1020,7 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 			xmlencode(fp, entrypath, strlen(entrypath));
 			fputs("</a></td><td class=\"num\" align=\"right\">", fp);
 			if (lc > 0)
-				fprintf(fp, "%dL", lc);
+				fprintf(fp, "%zuL", lc);
 			else
 				fprintf(fp, "%juB", (uintmax_t)filesize);
 			fputs("</td></tr>\n", fp);
