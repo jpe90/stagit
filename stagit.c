@@ -16,6 +16,8 @@
 
 #include "compat.h"
 
+#define LEN(s)    (sizeof(s)/sizeof(*s))
+
 struct deltainfo {
 	git_patch *patch;
 
@@ -1230,7 +1232,7 @@ main(int argc, char *argv[])
 	}
 
 	/* check LICENSE */
-	for (i = 0; i < sizeof(licensefiles) / sizeof(*licensefiles) && !license; i++) {
+	for (i = 0; i < LEN(licensefiles) && !license; i++) {
 		if (!git_revparse_single(&obj, repo, licensefiles[i]) &&
 		    git_object_type(obj) == GIT_OBJ_BLOB)
 			license = licensefiles[i] + strlen("HEAD:");
@@ -1238,7 +1240,7 @@ main(int argc, char *argv[])
 	}
 
 	/* check README */
-	for (i = 0; i < sizeof(readmefiles) / sizeof(*readmefiles) && !readme; i++) {
+	for (i = 0; i < LEN(readmefiles) && !readme; i++) {
 		if (!git_revparse_single(&obj, repo, readmefiles[i]) &&
 		    git_object_type(obj) == GIT_OBJ_BLOB)
 			readme = readmefiles[i] + strlen("HEAD:");
