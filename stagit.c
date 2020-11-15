@@ -449,6 +449,7 @@ writeheader(FILE *fp, const char *title)
 	fputs("<!DOCTYPE html>\n"
 		"<html>\n<head>\n"
 		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n"
+		"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n"
 		"<title>", fp);
 	xmlencode(fp, title, strlen(title));
 	if (title[0] && strippedname[0])
