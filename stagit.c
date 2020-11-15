@@ -348,12 +348,12 @@ err:
 }
 
 FILE *
-efopen(const char *name, const char *flags)
+efopen(const char *filename, const char *flags)
 {
 	FILE *fp;
 
-	if (!(fp = fopen(name, flags)))
-		err(1, "fopen: '%s'", name);
+	if (!(fp = fopen(filename, flags)))
+		err(1, "fopen: '%s'", filename);
 
 	return fp;
 }
