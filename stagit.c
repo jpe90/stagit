@@ -977,7 +977,7 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 	git_object *obj = NULL;
 	git_off_t filesize;
 	const char *entryname;
-	char filepath[PATH_MAX], entrypath[PATH_MAX];
+	char filepath[PATH_MAX], entrypath[PATH_MAX], oid[8];
 	size_t count, i, lc;
 	int r, ret;
 
@@ -1031,7 +1031,10 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 			fprintf(fp, "<tr><td>m---------</td><td><a href=\"%sfile/.gitmodules.html\">",
 				relpath);
 			xmlencode(fp, entrypath, strlen(entrypath));
-			fputs("</a></td><td class=\"num\" align=\"right\"></td></tr>\n", fp);
+			fputs("</a> @ ", fp);
+			git_oid_tostr(oid, sizeof(oid), git_tree_entry_id(entry));
+			xmlencode(fp, oid, strlen(oid));
+			fputs("</td><td class=\"num\" align=\"right\"></td></tr>\n", fp);
 		}
 	}
 
