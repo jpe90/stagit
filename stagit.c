@@ -504,15 +504,15 @@ writefooter(FILE *fp)
 size_t
 writeblobhtml(FILE *fp, const git_blob *blob)
 {
-	size_t n = 0, i, prev;
+	size_t n = 0, i, len, prev;
 	const char *nfmt = "<a href=\"#l%zu\" class=\"line\" id=\"l%zu\">%7zu</a> ";
 	const char *s = git_blob_rawcontent(blob);
-	git_off_t len = git_blob_rawsize(blob);
 
+	len = git_blob_rawsize(blob);
 	fputs("<pre id=\"blob\">\n", fp);
 
 	if (len > 0) {
-		for (i = 0, prev = 0; i < (size_t)len; i++) {
+		for (i = 0, prev = 0; i < len; i++) {
 			if (s[i] != '\n')
 				continue;
 			n++;
@@ -886,7 +886,7 @@ writeatom(FILE *fp, int all)
 }
 
 size_t
-writeblob(git_object *obj, const char *fpath, const char *filename, git_off_t filesize)
+writeblob(git_object *obj, const char *fpath, const char *filename, size_t filesize)
 {
 	char tmp[PATH_MAX] = "", *d;
 	const char *p;
@@ -910,7 +910,7 @@ writeblob(git_object *obj, const char *fpath, const char *filename, git_off_t fi
 	writeheader(fp, filename);
 	fputs("<p> ", fp);
 	xmlencode(fp, filename, strlen(filename));
-	fprintf(fp, " (%juB)", (uintmax_t)filesize);
+	fprintf(fp, " (%zuB)", filesize);
 	fputs("</p><hr/>", fp);
 
 	if (git_blob_is_binary((git_blob *)obj)) {
@@ -975,10 +975,9 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 {
 	const git_tree_entry *entry = NULL;
 	git_object *obj = NULL;
-	git_off_t filesize;
 	const char *entryname;
 	char filepath[PATH_MAX], entrypath[PATH_MAX], oid[8];
-	size_t count, i, lc;
+	size_t count, i, lc, filesize;
 	int r, ret;
 
 	count = git_tree_entrycount(tree);
@@ -1023,7 +1022,7 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 			if (lc > 0)
 				fprintf(fp, "%zuL", lc);
 			else
-				fprintf(fp, "%juB", (uintmax_t)filesize);
+				fprintf(fp, "%zuB", filesize);
 			fputs("</td></tr>\n", fp);
 			git_object_free(obj);
 		} else if (git_tree_entry_type(entry) == GIT_OBJ_COMMIT) {
