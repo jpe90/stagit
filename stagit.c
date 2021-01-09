@@ -371,7 +371,7 @@ xmlencode(FILE *fp, const char *s, size_t len)
 		case '\'': fputs("&#39;",  fp); break;
 		case '&':  fputs("&amp;",  fp); break;
 		case '"':  fputs("&quot;", fp); break;
-		default:   fputc(*s, fp);
+		default:   putc(*s, fp);
 		}
 	}
 }
@@ -552,12 +552,12 @@ printcommit(FILE *fp, struct commitinfo *ci)
 		xmlencode(fp, ci->author->email, strlen(ci->author->email));
 		fputs("</a>&gt;\n<b>Date:</b>   ", fp);
 		printtime(fp, &(ci->author->when));
-		fputc('\n', fp);
+		putc('\n', fp);
 	}
 	if (ci->msg) {
-		fputc('\n', fp);
+		putc('\n', fp);
 		xmlencode(fp, ci->msg, strlen(ci->msg));
-		fputc('\n', fp);
+		putc('\n', fp);
 	}
 }
 
@@ -676,7 +676,7 @@ printshowfile(FILE *fp, struct commitinfo *ci)
 					fprintf(fp, "<a href=\"#h%zu-%zu-%zu\" id=\"h%zu-%zu-%zu\" class=\"d\">-",
 						i, j, k, i, j, k);
 				else
-					fputc(' ', fp);
+					putc(' ', fp);
 				xmlencode(fp, line->content, line->content_len);
 				if (line->old_lineno == -1 || line->new_lineno == -1)
 					fputs("</a>", fp);
@@ -829,10 +829,10 @@ printcommitatom(FILE *fp, struct commitinfo *ci, const char *tag)
 		xmlencode(fp, ci->author->email, strlen(ci->author->email));
 		fputs("&gt;\nDate:   ", fp);
 		printtime(fp, &(ci->author->when));
-		fputc('\n', fp);
+		putc('\n', fp);
 	}
 	if (ci->msg) {
-		fputc('\n', fp);
+		putc('\n', fp);
 		xmlencode(fp, ci->msg, strlen(ci->msg));
 	}
 	fputs("\n</content>\n</entry>\n", fp);

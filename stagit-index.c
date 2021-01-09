@@ -41,7 +41,7 @@ xmlencode(FILE *fp, const char *s, size_t len)
 		case '\'': fputs("&#39;" , fp); break;
 		case '&':  fputs("&amp;",  fp); break;
 		case '"':  fputs("&quot;", fp); break;
-		default:   fputc(*s, fp);
+		default:   putc(*s, fp);
 		}
 	}
 }
