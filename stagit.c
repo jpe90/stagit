@@ -58,6 +58,7 @@ struct referenceinfo {
 
 static git_repository *repo;
 
+static const char *baseurl = ""; /* base URL to make absolute RSS/Atom URI */
 static const char *relpath = "";
 static const char *repodir;
 
@@ -807,8 +808,8 @@ printcommitatom(FILE *fp, struct commitinfo *ci, const char *tag)
 		xmlencode(fp, ci->summary, strlen(ci->summary));
 		fputs("</title>\n", fp);
 	}
-	fprintf(fp, "<link rel=\"alternate\" type=\"text/html\" href=\"commit/%s.html\" />\n",
-	        ci->oid);
+	fprintf(fp, "<link rel=\"alternate\" type=\"text/html\" href=\"%scommit/%s.html\" />\n",
+	        baseurl, ci->oid);
 
 	if (ci->author) {
 		fputs("<author>\n<name>", fp);
@@ -1183,6 +1184,9 @@ main(int argc, char *argv[])
 			err(1, "pledge");
 	}
 #endif
+
+	if ((p = getenv("STAGIT_BASEURL")))
+		baseurl = p;
 
 	if (git_repository_open_ext(&repo, repodir,
 		GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) < 0) {

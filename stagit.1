@@ -1,4 +1,4 @@
-.Dd July 19, 2020
+.Dd March 4, 2021
 .Dt STAGIT 1
 .Os
 .Sh NAME
@@ -103,6 +103,14 @@ favicon image.
 .It style.css
 CSS stylesheet.
 .El
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev STAGIT_BASEURL
+Base URL to make links in atom.xml absolute.
+For example: STAGIT_BASE_URL="https://git.codemadness.org/stagit/".
+.El
+.Sh EXIT STATUS
+.Ex -std
 .Sh SEE ALSO
 .Xr stagit-index 1
 .Sh AUTHORS
