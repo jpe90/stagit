@@ -31,7 +31,7 @@ for dir in "${reposdir}/"*/; do
 
 	mkdir -p "${curdir}/${d}"
 	cd "${curdir}/${d}" || continue
-	stagit -c ".cache" "${reposdir}/${r}"
+	stagit -c ".cache" -u "https://git.codemadness.nl/$d/" "${reposdir}/${r}"
 
 	# symlinks
 	ln -sf log.html index.html

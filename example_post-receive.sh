@@ -64,7 +64,7 @@ fi
 stagit-index "${reposdir}/"*/ > "${destdir}/index.html"
 
 # make pages.
-stagit -c "${cachefile}" "${reposdir}/${r}"
+stagit -c "${cachefile}" -u "https://git.codemadness.nl/$d/" "${reposdir}/${r}"
 
 ln -sf log.html index.html
 ln -sf ../style.css style.css

@@ -1,4 +1,4 @@
-.Dd March 4, 2021
+.Dd March 5, 2021
 .Dt STAGIT 1
 .Os
 .Sh NAME
@@ -8,6 +8,7 @@
 .Nm
 .Op Fl c Ar cachefile
 .Op Fl l Ar commits
+.Op Fl u Ar baseurl
 .Ar repodir
 .Sh DESCRIPTION
 .Nm
@@ -31,6 +32,9 @@ Write a maximum number of
 .Ar commits
 to the log.html file only.
 However the commit files are written as usual.
+.It Fl u Ar baseurl
+Base URL to make links in the Atom feeds absolute.
+For example: "https://git.codemadness.org/stagit/".
 .El
 .Pp
 The options
@@ -102,12 +106,6 @@ favicon image.
 32x32 logo.
 .It style.css
 CSS stylesheet.
-.El
-.Sh ENVIRONMENT
-.Bl -tag -width Ds
-.It Ev STAGIT_BASEURL
-Base URL to make links in atom.xml absolute.
-For example: STAGIT_BASE_URL="https://git.codemadness.org/stagit/".
 .El
 .Sh EXIT STATUS
 .Ex -std

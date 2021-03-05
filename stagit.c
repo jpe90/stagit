@@ -1125,7 +1125,8 @@ writerefs(FILE *fp)
 void
 usage(char *argv0)
 {
-	fprintf(stderr, "%s [-c cachefile | -l commits] repodir\n", argv0);
+	fprintf(stderr, "%s [-c cachefile | -l commits] "
+	        "[-u baseurl] repodir\n", argv0);
 	exit(1);
 }
 
@@ -1158,6 +1159,10 @@ main(int argc, char *argv[])
 			if (argv[i][0] == '\0' || *p != '\0' ||
 			    nlogcommits <= 0 || errno)
 				usage(argv[0]);
+		} else if (argv[i][1] == 'u') {
+			if (i + 1 >= argc)
+				usage(argv[0]);
+			baseurl = argv[++i];
 		}
 	}
 	if (!repodir)
@@ -1184,9 +1189,6 @@ main(int argc, char *argv[])
 			err(1, "pledge");
 	}
 #endif
-
-	if ((p = getenv("STAGIT_BASEURL")))
-		baseurl = p;
 
 	if (git_repository_open_ext(&repo, repodir,
 		GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) < 0) {
