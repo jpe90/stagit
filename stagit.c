@@ -377,6 +377,26 @@ xmlencode(FILE *fp, const char *s, size_t len)
 	}
 }
 
+/* Escape characters below as HTML 2.0 / XML 1.0, ignore printing '\n', '\r' */
+void
+xmlencodeline(FILE *fp, const char *s, size_t len)
+{
+	size_t i;
+
+	for (i = 0; *s && i < len; s++, i++) {
+		switch(*s) {
+		case '<':  fputs("&lt;",   fp); break;
+		case '>':  fputs("&gt;",   fp); break;
+		case '\'': fputs("&#39;",  fp); break;
+		case '&':  fputs("&amp;",  fp); break;
+		case '"':  fputs("&quot;", fp); break;
+		case '\r': break; /* ignore CR */
+		case '\n': break; /* ignore LF */
+		default:   putc(*s, fp);
+		}
+	}
+}
+
 int
 mkdirp(const char *path)
 {
@@ -678,7 +698,8 @@ printshowfile(FILE *fp, struct commitinfo *ci)
 						i, j, k, i, j, k);
 				else
 					putc(' ', fp);
-				xmlencode(fp, line->content, line->content_len);
+				xmlencodeline(fp, line->content, line->content_len);
+				putc('\n', fp);
 				if (line->old_lineno == -1 || line->new_lineno == -1)
 					fputs("</a>", fp);
 			}
