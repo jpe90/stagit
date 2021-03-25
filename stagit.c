@@ -377,7 +377,7 @@ xmlencode(FILE *fp, const char *s, size_t len)
 	}
 }
 
-/* Escape characters below as HTML 2.0 / XML 1.0, ignore printing '\n', '\r' */
+/* Escape characters below as HTML 2.0 / XML 1.0, ignore printing '\r', '\n' */
 void
 xmlencodeline(FILE *fp, const char *s, size_t len)
 {
