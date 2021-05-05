@@ -101,7 +101,6 @@ writelog(FILE *fp)
 
 	git_revwalk_new(&w, repo);
 	git_revwalk_push_head(w);
-	git_revwalk_simplify_first_parent(w);
 
 	if (git_revwalk_next(&id, w) ||
 	    git_commit_lookup(&commit, repo, &id)) {
