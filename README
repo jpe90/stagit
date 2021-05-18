@@ -11,12 +11,17 @@ Usage
 
 Make files per repository:
 
-	$ mkdir -p htmldir && cd htmldir
-	$ stagit path-to-repo
+	$ mkdir -p htmlroot/htmlrepo1 && cd htmlroot/htmlrepo1
+	$ stagit path/to/gitrepo1
+	repeat for other repositories
+	$ ...
 
 Make index file for repositories:
 
-	$ stagit-index repodir1 repodir2 repodir3 > index.html
+	$ cd htmlroot
+	$ stagit-index path/to/gitrepo1 \
+	               path/to/gitrepo2 \
+	               path/to/gitrepo3 > index.html
 
 
 Build and install
