@@ -6,7 +6,7 @@
 # - copy style.css, logo.png and favicon.png manually, a style.css example
 #   is included.
 #
-# - write clone url, for example "git://git.codemadness.org/dir" to the "url"
+# - write clone URL, for example "git://git.codemadness.org/dir" to the "url"
 #   file for each repo.
 # - write owner of repo to the "owner" file.
 # - write description in "description" file.
