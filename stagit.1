@@ -1,4 +1,4 @@
-.Dd July 27, 2021
+.Dd August 2, 2021
 .Dt STAGIT 1
 .Os
 .Sh NAME
@@ -110,6 +110,15 @@ CSS stylesheet.
 .El
 .Sh EXIT STATUS
 .Ex -std
+.Sh EXAMPLES
+.Bd -literal
+mkdir -p htmlroot/htmlrepo1 && cd htmlroot/htmlrepo1
+stagit path/to/gitrepo1
+# repeat for other repositories.
+.Ed
+.Pp
+To update the HTML files when the repository is changed a git post-receive hook
+can be used, see the file example_post-receive.sh for an example.
 .Sh SEE ALSO
 .Xr stagit-index 1
 .Sh AUTHORS
