@@ -562,14 +562,15 @@ writeblobhtml(FILE *fp, const git_blob *blob)
 				continue;
 			n++;
 			fprintf(fp, nfmt, n, n, n);
-			xmlencode(fp, &s[prev], i - prev + 1);
+			xmlencodeline(fp, &s[prev], i - prev + 1);
+			putc('\n', fp);
 			prev = i + 1;
 		}
 		/* trailing data */
 		if ((len - prev) > 0) {
 			n++;
 			fprintf(fp, nfmt, n, n, n);
-			xmlencode(fp, &s[prev], len - prev);
+			xmlencodeline(fp, &s[prev], len - prev);
 		}
 	}
 
