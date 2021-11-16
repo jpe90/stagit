@@ -71,7 +71,7 @@ static char *licensefiles[] = { "HEAD:LICENSE", "HEAD:LICENSE.md", "HEAD:COPYING
 static char *license;
 static char *readmefiles[] = { "HEAD:README", "HEAD:README.md" };
 static char *readme;
-static long long nlogcommits = -1; /* < 0 indicates not used */
+static long long nlogcommits = -1; /* -1 indicates not used */
 
 /* cache */
 static git_oid lastoid;
@@ -764,6 +764,7 @@ writelog(FILE *fp, const git_oid *oid)
 	git_oid id;
 	char path[PATH_MAX], oidstr[GIT_OID_HEXSZ + 1];
 	FILE *fpfile;
+	size_t remcommits = 0;
 	int r;
 
 	git_revwalk_new(&w, repo);
@@ -783,8 +784,11 @@ writelog(FILE *fp, const git_oid *oid)
 
 		/* optimization: if there are no log lines to write and
 		   the commit file already exists: skip the diffstat */
-		if (!nlogcommits && !r)
-			continue;
+		if (!nlogcommits) {
+			remcommits++;
+			if (!r)
+				continue;
+		}
 
 		if (!(ci = commitinfo_getbyoid(&id)))
 			break;
@@ -792,15 +796,10 @@ writelog(FILE *fp, const git_oid *oid)
 		if (commitinfo_getstats(ci) == -1)
 			goto err;
 
-		if (nlogcommits < 0) {
+		if (nlogcommits != 0) {
 			writelogline(fp, ci);
-		} else if (nlogcommits > 0) {
-			writelogline(fp, ci);
-			nlogcommits--;
-			if (!nlogcommits && ci->parentoid[0])
-				fputs("<tr><td></td><td colspan=\"5\">"
-				      "More commits remaining [...]</td>"
-				      "</tr>\n", fp);
+			if (nlogcommits > 0)
+				nlogcommits--;
 		}
 
 		if (cachefile)
@@ -821,6 +820,12 @@ err:
 		commitinfo_free(ci);
 	}
 	git_revwalk_free(w);
+
+	if (nlogcommits == 0 && remcommits != 0) {
+		fprintf(fp, "<tr><td></td><td colspan=\"5\">"
+		        "%zu more commits remaining, fetch the repository"
+		        "</td></tr>\n", remcommits);
+	}
 
 	relpath = "";
 
