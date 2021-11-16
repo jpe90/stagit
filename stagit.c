@@ -359,6 +359,28 @@ efopen(const char *filename, const char *flags)
 	return fp;
 }
 
+/* Percent-encode, see RFC3986 section 2.1. */
+void
+percentencode(FILE *fp, const char *s, size_t len)
+{
+	static char tab[] = "0123456789ABCDEF";
+	unsigned char uc;
+	size_t i;
+
+	for (i = 0; *s && i < len; s++, i++) {
+		uc = *s;
+		/* NOTE: do not encode '/' for paths */
+		if (uc < '/' || uc >= 127 || (uc >= ':' && uc <= '@') ||
+		    uc == '[' || uc == ']') {
+			putc('%', fp);
+			putc(tab[(uc >> 4) & 0x0f], fp);
+			putc(tab[uc & 0x0f], fp);
+		} else {
+			putc(uc, fp);
+		}
+	}
+}
+
 /* Escape characters below as HTML 2.0 / XML 1.0. */
 void
 xmlencode(FILE *fp, const char *s, size_t len)
@@ -497,7 +519,7 @@ writeheader(FILE *fp, const char *title)
 	fputs("</span></td></tr>", fp);
 	if (cloneurl[0]) {
 		fputs("<tr class=\"url\"><td></td><td>git clone <a href=\"", fp);
-		xmlencode(fp, cloneurl, strlen(cloneurl));
+		xmlencode(fp, cloneurl, strlen(cloneurl)); /* not percent-encoded */
 		fputs("\">", fp);
 		xmlencode(fp, cloneurl, strlen(cloneurl));
 		fputs("</a></td></tr>", fp);
@@ -570,7 +592,7 @@ printcommit(FILE *fp, struct commitinfo *ci)
 		fputs("<b>Author:</b> ", fp);
 		xmlencode(fp, ci->author->name, strlen(ci->author->name));
 		fputs(" &lt;<a href=\"mailto:", fp);
-		xmlencode(fp, ci->author->email, strlen(ci->author->email));
+		xmlencode(fp, ci->author->email, strlen(ci->author->email)); /* not percent-encoded */
 		fputs("\">", fp);
 		xmlencode(fp, ci->author->email, strlen(ci->author->email));
 		fputs("</a>&gt;\n<b>Date:</b>   ", fp);
@@ -665,11 +687,11 @@ printshowfile(FILE *fp, struct commitinfo *ci)
 		patch = ci->deltas[i]->patch;
 		delta = git_patch_get_delta(patch);
 		fprintf(fp, "<b>diff --git a/<a id=\"h%zu\" href=\"%sfile/", i, relpath);
-		xmlencode(fp, delta->old_file.path, strlen(delta->old_file.path));
+		percentencode(fp, delta->old_file.path, strlen(delta->old_file.path));
 		fputs(".html\">", fp);
 		xmlencode(fp, delta->old_file.path, strlen(delta->old_file.path));
 		fprintf(fp, "</a> b/<a href=\"%sfile/", relpath);
-		xmlencode(fp, delta->new_file.path, strlen(delta->new_file.path));
+		percentencode(fp, delta->new_file.path, strlen(delta->new_file.path));
 		fprintf(fp, ".html\">");
 		xmlencode(fp, delta->new_file.path, strlen(delta->new_file.path));
 		fprintf(fp, "</a></b>\n");
@@ -1037,7 +1059,7 @@ writefilestree(FILE *fp, git_tree *tree, const char *path)
 			fputs("<tr><td>", fp);
 			fputs(filemode(git_tree_entry_filemode(entry)), fp);
 			fprintf(fp, "</td><td><a href=\"%s", relpath);
-			xmlencode(fp, filepath, strlen(filepath));
+			percentencode(fp, filepath, strlen(filepath));
 			fputs("\">", fp);
 			xmlencode(fp, entrypath, strlen(entrypath));
 			fputs("</a></td><td class=\"num\" align=\"right\">", fp);
