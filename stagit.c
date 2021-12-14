@@ -369,8 +369,8 @@ percentencode(FILE *fp, const char *s, size_t len)
 
 	for (i = 0; *s && i < len; s++, i++) {
 		uc = *s;
-		/* NOTE: do not encode '/' for paths */
-		if (uc < '/' || uc >= 127 || (uc >= ':' && uc <= '@') ||
+		/* NOTE: do not encode '/' for paths or ",-." */
+		if (uc < ',' || uc >= 127 || (uc >= ':' && uc <= '@') ||
 		    uc == '[' || uc == ']') {
 			putc('%', fp);
 			putc(tab[(uc >> 4) & 0x0f], fp);
