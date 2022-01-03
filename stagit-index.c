@@ -173,7 +173,11 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
+	/* do not search outside the git repository:
+	   GIT_CONFIG_LEVEL_APP is the highest level currently */
 	git_libgit2_init();
+	for (i = 1; i <= GIT_CONFIG_LEVEL_APP; i++)
+		git_libgit2_opts(GIT_OPT_SET_SEARCH_PATH, i, "");
 
 #ifdef __OpenBSD__
 	if (pledge("stdio rpath", NULL) == -1)
