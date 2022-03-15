@@ -104,3 +104,51 @@ pre a.i:hover,
 pre a.d:hover {
 	text-decoration: none;
 }
+
+@media (prefers-color-scheme: dark) {
+	body {
+		background-color: #000;
+		color: #bdbdbd;
+	}
+	hr {
+		border-color: #222;
+	}
+	a {
+		color: #56c8ff;
+	}
+	a:target {
+		background-color: #222;
+	}
+	.desc {
+		color: #aaa;
+	}
+	#blob a {
+		color: #555;
+	}
+	#blob a:target {
+		color: #eee;
+	}
+	#blob a:hover {
+		color: #56c8ff;
+	}
+	pre a.h {
+		color: #00cdcd;
+	}
+	.A,
+	span.i,
+	pre a.i {
+		color: #00cd00;
+	}
+	.D,
+	span.d,
+	pre a.d {
+		color: #cd0000;
+	}
+	#branches tr:hover td,
+	#tags tr:hover td,
+	#index tr:hover td,
+	#log tr:hover td,
+	#files tr:hover td {
+		background-color: #111;
+	}
+}
