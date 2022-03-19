@@ -16,6 +16,16 @@ static char description[255] = "Repositories";
 static char *name = "";
 static char owner[255];
 
+/* Handle read or write errors for a FILE * stream */
+void
+checkfileerror(FILE *fp, const char *name, int mode)
+{
+	if (mode == 'r' && ferror(fp))
+		errx(1, "read error: %s", name);
+	else if (mode == 'w' && (fflush(fp) || ferror(fp)))
+		errx(1, "write error: %s", name);
+}
+
 void
 joinpath(char *buf, size_t bufsiz, const char *path, const char *path2)
 {
@@ -214,6 +224,7 @@ main(int argc, char *argv[])
 		if (fp) {
 			if (!fgets(description, sizeof(description), fp))
 				description[0] = '\0';
+			checkfileerror(fp, "description", 'r');
 			fclose(fp);
 		}
 
@@ -227,8 +238,9 @@ main(int argc, char *argv[])
 		if (fp) {
 			if (!fgets(owner, sizeof(owner), fp))
 				owner[0] = '\0';
-			owner[strcspn(owner, "\n")] = '\0';
+			checkfileerror(fp, "owner", 'r');
 			fclose(fp);
+			owner[strcspn(owner, "\n")] = '\0';
 		}
 		writelog(stdout);
 	}
@@ -237,6 +249,8 @@ main(int argc, char *argv[])
 	/* cleanup */
 	git_repository_free(repo);
 	git_libgit2_shutdown();
+
+	checkfileerror(stdout, "<stdout>", 'w');
 
 	return ret;
 }
