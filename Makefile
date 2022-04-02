@@ -1,7 +1,7 @@
 .POSIX:
 
 NAME = stagit
-VERSION = 1.0
+VERSION = 1.1
 
 # paths
 PREFIX = /usr/local
