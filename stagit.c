@@ -1235,10 +1235,8 @@ main(int argc, char *argv[])
 	git_libgit2_init();
 	for (i = 1; i <= GIT_CONFIG_LEVEL_APP; i++)
 		git_libgit2_opts(GIT_OPT_SET_SEARCH_PATH, i, "");
-#ifdef GIT_OPT_SET_OWNER_VALIDATION
 	/* do not require the git repository to be owned by the current user */
 	git_libgit2_opts(GIT_OPT_SET_OWNER_VALIDATION, 0);
-#endif
 
 #ifdef __OpenBSD__
 	if (unveil(repodir, "r") == -1)
