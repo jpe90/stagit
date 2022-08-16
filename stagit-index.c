@@ -179,7 +179,7 @@ main(int argc, char *argv[])
 	int i, ret = 0;
 
 	if (argc < 2) {
-		fprintf(stderr, "%s [repodir...]\n", argv[0]);
+		fprintf(stderr, "usage: %s [repodir...]\n", argv[0]);
 		return 1;
 	}
 

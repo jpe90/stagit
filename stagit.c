@@ -1184,7 +1184,7 @@ writerefs(FILE *fp)
 void
 usage(char *argv0)
 {
-	fprintf(stderr, "%s [-c cachefile | -l commits] "
+	fprintf(stderr, "usage: %s [-c cachefile | -l commits] "
 	        "[-u baseurl] repodir\n", argv0);
 	exit(1);
 }
