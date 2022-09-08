@@ -110,7 +110,7 @@ writeheader(FILE *fp)
 	fputs("</span></td></tr><tr><td></td><td>\n"
 		"</td></tr>\n</table>\n<hr/>\n<div id=\"content\">\n"
 		"<table id=\"index\"><thead>\n"
-		"<tr><td><b>Name</b></td><td><b>Description</b></td><td><b>Owner</b></td>"
+		"<tr><td><b>Name</b></td><td><b>Description</b></td>"
 		"<td><b>Last commit</b></td></tr>"
 		"</thead><tbody>\n", fp);
 }
@@ -155,8 +155,6 @@ writelog(FILE *fp)
 	xmlencode(fp, stripped_name, strlen(stripped_name));
 	fputs("</a></td><td>", fp);
 	xmlencode(fp, description, strlen(description));
-	fputs("</td><td>", fp);
-	xmlencode(fp, owner, strlen(owner));
 	fputs("</td><td>", fp);
 	if (author)
 		printtimeshort(fp, &(author->when));
