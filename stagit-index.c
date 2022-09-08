@@ -8,10 +8,14 @@
 
 #include <git2.h>
 
+#define LEN(s)    (sizeof(s)/sizeof(*s))
+
 static git_repository *repo;
 
 static const char *relpath = "";
 
+static char *readmefiles[] = { "HEAD:README", "HEAD:README.md" };
+static char *readme;
 static char description[255] = "Repositories";
 static char *name = "";
 static char owner[255];
@@ -105,7 +109,7 @@ writeheader(FILE *fp)
 	fprintf(fp, "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sstyle.css\" />\n", relpath);
 	fputs("</head>\n<body>\n", fp);
 	fprintf(fp, "<table>\n<tr><td><img src=\"%slogo.png\" alt=\"\" width=\"32\" height=\"32\" /></td>\n"
-	        "<td><span class=\"desc\">", relpath);
+	"<td><span class=\"desc\">", relpath);
 	xmlencode(fp, description, strlen(description));
 	fputs("</span></td></tr><tr><td></td><td>\n"
 		"</td></tr>\n</table>\n<hr/>\n<div id=\"content\">\n"
@@ -151,7 +155,14 @@ writelog(FILE *fp)
 
 	fputs("<tr><td><a href=\"", fp);
 	percentencode(fp, stripped_name, strlen(stripped_name));
-	fputs("/log.html\">", fp);
+	if(readme) {
+		fputs("/file/", fp);
+		percentencode(fp, readme, strlen(readme));
+		fputs(".html\">",fp);
+	}
+	else {
+		fputs("/log.html\">", fp);
+	}
 	xmlencode(fp, stripped_name, strlen(stripped_name));
 	fputs("</a></td><td>", fp);
 	xmlencode(fp, description, strlen(description));
@@ -173,10 +184,11 @@ err:
 int
 main(int argc, char *argv[])
 {
+	git_object *obj = NULL;
 	FILE *fp;
 	char path[PATH_MAX], repodirabs[PATH_MAX + 1];
 	const char *repodir;
-	int i, ret = 0;
+	int i, j, ret= 0;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s [repodir...]\n", argv[0]);
@@ -229,7 +241,6 @@ main(int argc, char *argv[])
 			checkfileerror(fp, "description", 'r');
 			fclose(fp);
 		}
-
 		/* read owner or .git/owner */
 		joinpath(path, sizeof(path), repodir, "owner");
 		if (!(fp = fopen(path, "r"))) {
@@ -244,7 +255,27 @@ main(int argc, char *argv[])
 			fclose(fp);
 			owner[strcspn(owner, "\n")] = '\0';
 		}
+
+		/* check README */
+		for (j = 0; j < LEN(readmefiles) && !readme; j++) {
+			if (!git_revparse_single(&obj, repo, readmefiles[j]) &&
+				git_object_type(obj) == GIT_OBJ_BLOB)
+				readme = readmefiles[j] + strlen("HEAD:");
+			git_object_free(obj);
+		}
+		// if we the file doesnt open, continue the loop
+		// otherwise, set readme to the current val
+		for (j = 0; j < LEN(readmefiles); j++) {
+				joinpath(path, sizeof(path), repodir,readmefiles[j]);
+				fp = fopen(path, "r");
+				if (fp) {
+					readme=readmefiles[j];
+				}
+		}
 		writelog(stdout);
+		if(readme) {
+			readme = NULL;
+		}
 	}
 	writefooter(stdout);
 
