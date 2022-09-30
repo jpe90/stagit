@@ -535,15 +535,15 @@ writeheader(FILE *fp, const char *title)
 		fputs("</a></td></tr>", fp);
 	}
 	fputs("<tr><td></td><td>\n", fp);
+	if (readme)
+		fprintf(fp, "<a href=\"%sfile/%s.html\">README</a> | ",
+		        relpath, readme);
 	fprintf(fp, "<a href=\"%slog.html\">Log</a> | ", relpath);
 	fprintf(fp, "<a href=\"%sfiles.html\">Files</a> | ", relpath);
 	fprintf(fp, "<a href=\"%srefs.html\">Refs</a>", relpath);
 	if (submodules)
 		fprintf(fp, " | <a href=\"%sfile/%s.html\">Submodules</a>",
 		        relpath, submodules);
-	if (readme)
-		fprintf(fp, " | <a href=\"%sfile/%s.html\">README</a>",
-		        relpath, readme);
 	if (license)
 		fprintf(fp, " | <a href=\"%sfile/%s.html\">LICENSE</a>",
 		        relpath, license);
