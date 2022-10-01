@@ -261,15 +261,6 @@ main(int argc, char *argv[])
 				readme = readmefiles[j] + strlen("HEAD:");
 			git_object_free(obj);
 		}
-		// if we the file doesnt open, continue the loop
-		// otherwise, set readme to the current val
-		for (j = 0; j < LEN(readmefiles); j++) {
-				joinpath(path, sizeof(path), repodir,readmefiles[j]);
-				fp = fopen(path, "r");
-				if (fp) {
-					readme=readmefiles[j];
-				}
-		}
 		writelog(stdout);
 		if(readme) {
 			readme = NULL;

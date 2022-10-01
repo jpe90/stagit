@@ -317,7 +317,7 @@ getrefs(struct referenceinfo **pris, size_t *prefcount)
 			continue;
 		}
 		if (!git_reference_target(r) ||
-		    git_reference_peel(&obj, r, GIT_OBJ_ANY))
+			git_reference_peel(&obj, r, GIT_OBJ_ANY))
 			goto err;
 		if (!(id = git_object_id(obj)))
 			goto err;
@@ -557,7 +557,7 @@ writefooter(FILE *fp)
 }
 
 size_t
-writeblobhtml(FILE *fp, const git_blob *blob)
+writeblobhtml(FILE *fp, const git_blob *blob, const char *filename)
 {
 	size_t n = 0, i, len, prev;
 	const char *nfmt = "<a href=\"#l%zu\" class=\"line\" id=\"l%zu\">%7zu</a> ";
@@ -567,21 +567,30 @@ writeblobhtml(FILE *fp, const git_blob *blob)
 	fputs("<pre id=\"blob\">\n", fp);
 
 	if (len > 0) {
-		for (i = 0, prev = 0; i < len; i++) {
-			if (s[i] != '\n')
-				continue;
-			n++;
-			fprintf(fp, nfmt, n, n, n);
-			xmlencodeline(fp, &s[prev], i - prev + 1);
-			putc('\n', fp);
-			prev = i + 1;
+		fflush(fp);
+		int og_out = dup(fileno(stdout));
+		if (-1 == dup2(fileno(fp), 1))
+			errx(1, "unable to redirect stdout");
+
+		char cmd[255] = "chroma --html --html-only --html-lines --html-lines-table --filename ";
+
+		strncat(cmd, filename, strlen(filename) + 1);
+		FILE* p = popen(cmd, "w");
+		if (p == NULL)
+			errx(1, "unable to open chroma process: %s", strerror(errno));
+
+		size_t i, lc;
+		for (i = 0; *s && i < len; s++, i++) {
+			if (*s == '\n')
+				lc++;
+			fprintf(p, "%c", *s);
 		}
-		/* trailing data */
-		if ((len - prev) > 0) {
-			n++;
-			fprintf(fp, nfmt, n, n, n);
-			xmlencodeline(fp, &s[prev], len - prev);
-		}
+
+		pclose(p);
+		fflush(stdout);
+		dup2(og_out, 1);
+		return lc;
+
 	}
 
 	fputs("</pre>\n", fp);
@@ -977,7 +986,7 @@ writeblob(git_object *obj, const char *fpath, const char *filename, size_t files
 	if (git_blob_is_binary((git_blob *)obj))
 		fputs("<p>Binary file.</p>\n", fp);
 	else
-		lc = writeblobhtml(fp, (git_blob *)obj);
+		lc = writeblobhtml(fp, (git_blob *)obj, filename);
 
 	writefooter(fp);
 	checkfileerror(fp, fpath, 'w');
