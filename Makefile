@@ -11,9 +11,12 @@ DOCPREFIX = ${PREFIX}/share/doc/${NAME}
 LIBGIT_INC = -I/usr/local/include
 LIBGIT_LIB = -L/usr/local/lib -lgit2
 
+LIBMD4C_INC = -I/usr/local/include
+LIBMD4C_LIB = -L/usr/local/lib -lmd4c -lmd4c-html
+
 # use system flags.
-STAGIT_CFLAGS = ${LIBGIT_INC} ${CFLAGS}
-STAGIT_LDFLAGS = ${LIBGIT_LIB} ${LDFLAGS}
+STAGIT_CFLAGS = ${LIBGIT_INC} ${LIBMD4C_INC} ${CFLAGS}
+STAGIT_LDFLAGS = ${LIBGIT_LIB} ${LIBMD4C_LIB} ${LDFLAGS}
 STAGIT_CPPFLAGS = -D_XOPEN_SOURCE=700 -D_DEFAULT_SOURCE -D_BSD_SOURCE
 
 # Uncomment to enable workaround for older libgit2 which don't support this

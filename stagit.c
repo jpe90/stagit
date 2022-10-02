@@ -16,6 +16,8 @@
 
 #include "compat.h"
 
+#include "md4c-html.h"
+
 #define LEN(s)    (sizeof(s)/sizeof(*s))
 
 struct deltainfo {
@@ -556,6 +558,39 @@ writefooter(FILE *fp)
 	fputs("</div>\n</body>\n</html>\n", fp);
 }
 
+
+void
+processmd(const char* output, unsigned int len, void *fp)
+{
+	fprintf((FILE *)fp, "%.*s", len, output);
+}
+
+size_t
+writeblobmd(FILE *fp, const git_blob *blob)
+{
+	size_t n = 0, i, len, prev, ret;
+	const char *s = git_blob_rawcontent(blob);
+	len = git_blob_rawsize(blob);
+	fputs("<div id=\"md\">\n", fp);
+	/* Counting lines in the file*/
+	if (len > 0) {
+		for (i = 0, prev = 0; i < len; i++) {
+			if (s[i] != '\n')
+				continue;
+			n++;
+			prev = i + 1;
+		}
+		if ((len - prev) > 0) {
+			n++;
+		}
+		ret = md_html(s, len, processmd, fp, MD_FLAG_TABLES | MD_FLAG_TASKLISTS |
+					  MD_FLAG_PERMISSIVEEMAILAUTOLINKS | MD_FLAG_PERMISSIVEURLAUTOLINKS, 0);
+	}
+
+	fputs("</div>\n", fp);
+	return n;
+}
+
 size_t
 writeblobhtml(FILE *fp, const git_blob *blob, const char *filename)
 {
@@ -955,6 +990,15 @@ writeatom(FILE *fp, int all)
 	return 0;
 }
 
+
+int
+git_blob_is_markdown_file(const char *filename)
+{
+	const char *ext = strrchr(filename, '.');
+	return ((ext != NULL && (!strcmp (ext+1, "md"))));
+}
+
+
 size_t
 writeblob(git_object *obj, const char *fpath, const char *filename, size_t filesize)
 {
@@ -985,6 +1029,8 @@ writeblob(git_object *obj, const char *fpath, const char *filename, size_t files
 
 	if (git_blob_is_binary((git_blob *)obj))
 		fputs("<p>Binary file.</p>\n", fp);
+	else if (git_blob_is_markdown_file(filename))
+		lc = writeblobmd(fp, (git_blob*)obj);
 	else
 		lc = writeblobhtml(fp, (git_blob *)obj, filename);
 
