@@ -71,7 +71,7 @@ static char cloneurl[1024];
 static char *submodules;
 static char *licensefiles[] = { "HEAD:LICENSE", "HEAD:LICENSE.md", "HEAD:COPYING" };
 static char *license;
-static char *readmefiles[] = { "HEAD:README", "HEAD:README.md" };
+static char *readmefiles[] = { "HEAD:README", "HEAD:README.md", "HEAD:readme", "HEAD:readme.md" };
 static char *readme;
 static long long nlogcommits = -1; /* -1 indicates not used */
 
