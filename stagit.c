@@ -607,7 +607,7 @@ writeblobhtml(FILE *fp, const git_blob *blob, const char *filename)
 		if (-1 == dup2(fileno(fp), 1))
 			errx(1, "unable to redirect stdout");
 
-		char cmd[255] = "chroma --html --html-only --html-lines --html-lines-table --filename ";
+		char cmd[255] = "chroma --html --html-only --html-lines --html-lines-table --html-linkable-lines --filename ";
 
 		strncat(cmd, filename, strlen(filename) + 1);
 		FILE* p = popen(cmd, "w");
