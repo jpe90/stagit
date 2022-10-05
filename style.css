@@ -23,6 +23,7 @@ img, h1, h2 {
 
 img {
 	border: 0;
+	max-width: 1280px;
 }
 
 a:target {
@@ -196,7 +197,6 @@ pre a.d:hover {
 /* GenericTraceback */ .chroma .gt {  }
 /* GenericUnderline */ .chroma .gl {  }
 /* TextWhitespace */ .chroma .w {  }
-
 
 @media (prefers-color-scheme: dark) {
 	body {
