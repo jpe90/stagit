@@ -4,6 +4,14 @@ body {
 	font-family: monospace;
 }
 
+/* Fixes incorrect iOS font sizing due to flexbox */
+code {
+	text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	-moz-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	font-size: 1em;
 	margin: 0;
